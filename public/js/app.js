@@ -54,14 +54,21 @@ function displayNews(articles, newsData) {
   }
   
   const newsHtml = articles.map(article => {
-    const imageUrl = article.urlToImage || 'https://via.placeholder.com/400x200?text=No+Image';
+    // 이미지 URL 처리 - 로컬 이미지를 기본값으로 사용
+    const imageUrl = article.urlToImage || '/images/no-image.svg';
     const publishedDate = new Date(article.publishedAt).toLocaleDateString('ko-KR');
     const description = article.description || '설명이 없습니다.';
     
     return `
       <article class="news-item">
         <div class="news-image">
-          <img src="${imageUrl}" alt="${article.title}" onerror="this.src='https://via.placeholder.com/400x200?text=No+Image'">
+          <img 
+            src="${imageUrl}" 
+            alt="${article.title}"
+            loading="lazy"
+            onerror="handleImageError(this)"
+            data-original-src="${imageUrl}"
+          >
         </div>
         <div class="news-content">
           <h3 class="news-title">
@@ -88,6 +95,41 @@ function displayNews(articles, newsData) {
   `;
   
   newsGrid.innerHTML = metaInfo + '<div class="news-grid-container">' + newsHtml + '</div>';
+}
+
+// 개선된 이미지 에러 핸들링 함수
+function handleImageError(img) {
+  // 이미 재시도했다면 더 이상 시도하지 않음
+  if (img.dataset.retried) {
+    return;
+  }
+  
+  // 재시도 플래그 설정
+  img.dataset.retried = 'true';
+  
+  // 여러 fallback 옵션 시도
+  const fallbackImages = [
+    '/images/no-image.svg',                                           // 로컬 SVG
+    'https://placehold.co/400x200/f8f9fa/6c757d?text=No+Image',     // placehold.co
+    'https://dummyimage.com/400x200/f8f9fa/6c757d&text=No+Image',   // dummyimage.com
+    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y4ZjlmYSIgc3Ryb2tlPSIjZGVlMmU2IiBzdHJva2Utd2lkdGg9IjIiLz4KICA8dGV4dCB4PSIyMDAiIHk9IjkwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM2Yzc1N2QiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfk7A8L3RleHQ+CiAgPHRleHQgeD0iMjAwIiB5PSIxMTUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+7J207Jq47KeAIOyXhuydjDwvdGV4dD4KICA8dGV4dCB4PSIyMDAiIHk9IjEzNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjYWRiNWJkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ObyBJbWFnZSBBdmFpbGFibGU8L3RleHQ+Cjwvc3ZnPg==' // Base64 인코딩된 SVG
+  ];
+  
+  // 현재 시도 중인 fallback 인덱스
+  const currentIndex = parseInt(img.dataset.fallbackIndex || '0');
+  
+  if (currentIndex < fallbackImages.length) {
+    img.dataset.fallbackIndex = (currentIndex + 1).toString();
+    img.src = fallbackImages[currentIndex];
+    
+    // 마지막 fallback도 실패하면 onerror 제거
+    if (currentIndex === fallbackImages.length - 1) {
+      img.onerror = null;
+    }
+  } else {
+    // 모든 fallback 실패 시 onerror 제거
+    img.onerror = null;
+  }
 }
 
 // Initialize
