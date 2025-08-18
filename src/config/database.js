@@ -64,15 +64,44 @@ const connectRedis = async () => {
 
 const healthCheck = async () => {
   try {
+    const redisUrl = process.env.REDIS_URL;
+    
+    if (!redisUrl) {
+      return { 
+        redis: false, 
+        status: 'no_url_provided',
+        url: null
+      };
+    }
+    
     if (!redisClient || !redisClient.isOpen) {
-      return { redis: false, status: 'disconnected' };
+      return { 
+        redis: false, 
+        status: 'disconnected',
+        url: redisUrl ? 'configured' : 'not_configured'
+      };
     }
     
     await redisClient.ping();
-    return { redis: true, status: 'connected' };
+    
+    // URL 정보를 안전하게 표시 (비밀번호 마스킹)
+    const urlInfo = redisUrl ? redisUrl.replace(/:([^@]+)@/, ':***@') : 'not_configured';
+    
+    return { 
+      redis: true, 
+      status: 'connected',
+      url: urlInfo,
+      host: redisUrl ? new URL(redisUrl).hostname : null,
+      port: redisUrl ? new URL(redisUrl).port : null
+    };
   } catch (error) {
     logger.error('[Redis] Health check failed:', error.message);
-    return { redis: false, status: 'error', error: error.message };
+    return { 
+      redis: false, 
+      status: 'error', 
+      error: error.message,
+      url: process.env.REDIS_URL ? 'configured' : 'not_configured'
+    };
   }
 };
 
