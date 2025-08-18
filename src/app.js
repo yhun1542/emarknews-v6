@@ -69,7 +69,7 @@ class Application {
       });
     });
     
-    this.app.use('/', apiRoutes);
+    this.app.use('/api', apiRoutes);
     
     const publicPath = path.join(__dirname, '..', 'public');
     this.app.use(express.static(publicPath));
