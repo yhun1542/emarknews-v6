@@ -53,14 +53,15 @@ function displayNews(articles, newsData) {
     return;
   }
   
-  const newsHtml = articles.map(article => {
+  const newsHtml = articles.map((article, index) => {
     // 이미지 URL 처리 - 로컬 이미지를 기본값으로 사용
     const imageUrl = article.urlToImage || '/images/no-image.svg';
     const publishedDate = new Date(article.publishedAt).toLocaleDateString('ko-KR');
     const description = article.description || '설명이 없습니다.';
+    const articleId = `article_${Date.now()}_${index}`;
     
     return `
-      <article class="news-item">
+      <article class="news-item" data-article-id="${articleId}">
         <div class="news-image">
           <img 
             src="${imageUrl}" 
@@ -81,6 +82,18 @@ function displayNews(articles, newsData) {
             <span class="news-source">${article.source}</span>
             <span class="news-date">${publishedDate}</span>
           </div>
+          <div class="ai-actions">
+            <button class="ai-btn translate-btn" onclick="translateArticle('${articleId}', '${escapeQuotes(article.title)}', '${escapeQuotes(description)}')">
+              🌐 번역
+            </button>
+            <button class="ai-btn summarize-btn" onclick="summarizeArticle('${articleId}', '${escapeQuotes(article.title)}', '${escapeQuotes(description)}')">
+              📝 요약
+            </button>
+            <button class="ai-btn sentiment-btn" onclick="analyzeSentiment('${articleId}', '${escapeQuotes(article.title)}', '${escapeQuotes(description)}')">
+              😊 감정분석
+            </button>
+          </div>
+          <div class="ai-result" id="ai-result-${articleId}"></div>
         </div>
       </article>
     `;
@@ -95,6 +108,202 @@ function displayNews(articles, newsData) {
   `;
   
   newsGrid.innerHTML = metaInfo + '<div class="news-grid-container">' + newsHtml + '</div>';
+}
+
+// 따옴표 이스케이프 헬퍼 함수
+function escapeQuotes(str) {
+  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// AI 번역 기능
+async function translateArticle(articleId, title, description, targetLanguage = 'ko') {
+  const resultDiv = document.getElementById(`ai-result-${articleId}`);
+  const translateBtn = document.querySelector(`[data-article-id="${articleId}"] .translate-btn`);
+  
+  // 로딩 상태 표시
+  translateBtn.disabled = true;
+  translateBtn.textContent = '🔄 번역중...';
+  resultDiv.innerHTML = '<div class="ai-loading">AI가 번역하고 있습니다...</div>';
+  
+  try {
+    const response = await fetch('/api/translate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: title,
+        description: description,
+        targetLanguage: targetLanguage
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      resultDiv.innerHTML = `
+        <div class="ai-result-content translate-result">
+          <h4>🌐 번역 결과</h4>
+          <div class="translated-content">
+            <h5>제목:</h5>
+            <p class="translated-title">${result.translatedTitle}</p>
+            <h5>내용:</h5>
+            <p class="translated-description">${result.translatedDescription}</p>
+          </div>
+          <div class="ai-meta">
+            <small>번역 언어: ${result.targetLanguage} | AI 번역</small>
+          </div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `
+        <div class="ai-error">
+          <p>❌ 번역 실패: ${result.error}</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Translation error:', error);
+    resultDiv.innerHTML = `
+      <div class="ai-error">
+        <p>❌ 번역 중 오류가 발생했습니다.</p>
+      </div>
+    `;
+  } finally {
+    translateBtn.disabled = false;
+    translateBtn.textContent = '🌐 번역';
+  }
+}
+
+// AI 요약 기능
+async function summarizeArticle(articleId, title, description) {
+  const resultDiv = document.getElementById(`ai-result-${articleId}`);
+  const summarizeBtn = document.querySelector(`[data-article-id="${articleId}"] .summarize-btn`);
+  
+  // 로딩 상태 표시
+  summarizeBtn.disabled = true;
+  summarizeBtn.textContent = '🔄 요약중...';
+  resultDiv.innerHTML = '<div class="ai-loading">AI가 요약하고 있습니다...</div>';
+  
+  try {
+    const response = await fetch('/api/summarize', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: title,
+        description: description
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      const keyPointsHtml = result.keyPoints && result.keyPoints.length > 0 
+        ? `<h5>핵심 포인트:</h5><ul>${result.keyPoints.map(point => `<li>${point}</li>`).join('')}</ul>`
+        : '';
+      
+      resultDiv.innerHTML = `
+        <div class="ai-result-content summary-result">
+          <h4>📝 요약 결과</h4>
+          <div class="summary-content">
+            <h5>요약:</h5>
+            <p class="summary-text">${result.summary}</p>
+            ${keyPointsHtml}
+          </div>
+          <div class="ai-meta">
+            <small>AI 요약</small>
+          </div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `
+        <div class="ai-error">
+          <p>❌ 요약 실패: ${result.error}</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Summarization error:', error);
+    resultDiv.innerHTML = `
+      <div class="ai-error">
+        <p>❌ 요약 중 오류가 발생했습니다.</p>
+      </div>
+    `;
+  } finally {
+    summarizeBtn.disabled = false;
+    summarizeBtn.textContent = '📝 요약';
+  }
+}
+
+// AI 감정 분석 기능
+async function analyzeSentiment(articleId, title, description) {
+  const resultDiv = document.getElementById(`ai-result-${articleId}`);
+  const sentimentBtn = document.querySelector(`[data-article-id="${articleId}"] .sentiment-btn`);
+  
+  // 로딩 상태 표시
+  sentimentBtn.disabled = true;
+  sentimentBtn.textContent = '🔄 분석중...';
+  resultDiv.innerHTML = '<div class="ai-loading">AI가 감정을 분석하고 있습니다...</div>';
+  
+  try {
+    const response = await fetch('/api/analyze-sentiment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: title,
+        description: description
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      const sentimentEmoji = {
+        'positive': '😊',
+        'negative': '😔',
+        'neutral': '😐'
+      };
+      
+      const emotionsHtml = result.emotions && result.emotions.length > 0
+        ? `<p><strong>감정:</strong> ${result.emotions.join(', ')}</p>`
+        : '';
+      
+      resultDiv.innerHTML = `
+        <div class="ai-result-content sentiment-result">
+          <h4>😊 감정 분석 결과</h4>
+          <div class="sentiment-content">
+            <p><strong>전체 감정:</strong> ${sentimentEmoji[result.sentiment] || '😐'} ${result.sentiment}</p>
+            <p><strong>신뢰도:</strong> ${Math.round((result.confidence || 0.5) * 100)}%</p>
+            <p><strong>톤:</strong> ${result.tone}</p>
+            ${emotionsHtml}
+          </div>
+          <div class="ai-meta">
+            <small>AI 감정 분석</small>
+          </div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `
+        <div class="ai-error">
+          <p>❌ 감정 분석 실패: ${result.error}</p>
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.error('Sentiment analysis error:', error);
+    resultDiv.innerHTML = `
+      <div class="ai-error">
+        <p>❌ 감정 분석 중 오류가 발생했습니다.</p>
+      </div>
+    `;
+  } finally {
+    sentimentBtn.disabled = false;
+    sentimentBtn.textContent = '😊 감정분석';
+  }
 }
 
 // 개선된 이미지 에러 핸들링 함수

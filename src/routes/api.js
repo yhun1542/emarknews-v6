@@ -1,14 +1,107 @@
 const express = require('express');
 const router = express.Router();
 const newsService = require('../services/newsService');
+const aiService = require('../services/aiService');
 
 router.get('/health', async (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    version: '6.0.0'
-  });
+  try {
+    // AI 서비스 상태도 포함
+    const aiHealth = await aiService.healthCheck();
+    
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: '6.0.0',
+      ai: aiHealth
+    });
+  } catch (error) {
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      version: '6.0.0',
+      ai: { status: 'error', message: 'AI 상태 확인 실패' }
+    });
+  }
+});
+
+// AI 번역 엔드포인트
+router.post('/translate', async (req, res) => {
+  try {
+    const { title, description, targetLanguage = 'ko' } = req.body;
+    
+    if (!title || !description) {
+      return res.status(400).json({
+        success: false,
+        error: '제목과 내용이 필요합니다.'
+      });
+    }
+
+    console.log(`[AI] 번역 요청: ${targetLanguage}`);
+    const result = await aiService.translateArticle(title, description, targetLanguage);
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Translation error:', error);
+    res.status(500).json({
+      success: false,
+      error: '번역 중 오류가 발생했습니다.',
+      message: error.message
+    });
+  }
+});
+
+// AI 요약 엔드포인트
+router.post('/summarize', async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    
+    if (!title || !description) {
+      return res.status(400).json({
+        success: false,
+        error: '제목과 내용이 필요합니다.'
+      });
+    }
+
+    console.log(`[AI] 요약 요청`);
+    const result = await aiService.summarizeArticle(title, description);
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Summarization error:', error);
+    res.status(500).json({
+      success: false,
+      error: '요약 중 오류가 발생했습니다.',
+      message: error.message
+    });
+  }
+});
+
+// AI 감정 분석 엔드포인트
+router.post('/analyze-sentiment', async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    
+    if (!title || !description) {
+      return res.status(400).json({
+        success: false,
+        error: '제목과 내용이 필요합니다.'
+      });
+    }
+
+    console.log(`[AI] 감정 분석 요청`);
+    const result = await aiService.analyzeSentiment(title, description);
+    
+    res.json(result);
+  } catch (error) {
+    console.error('Sentiment analysis error:', error);
+    res.status(500).json({
+      success: false,
+      error: '감정 분석 중 오류가 발생했습니다.',
+      message: error.message
+    });
+  }
 });
 
 router.get('/feed', async (req, res) => {
