@@ -72,8 +72,8 @@ class Application {
     this.app.use('/api', apiRoutes);
     
     // API 라우트 매핑
-    this.app.get('/api/news', (req, res) => res.redirect('/feed'));
-    this.app.get('/api/articles', (req, res) => res.redirect('/feed'));
+    this.app.get('/api/news', (req, res) => res.redirect(`/api/feed${req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : ''}`));
+    this.app.get('/api/articles', (req, res) => res.redirect(`/api/feed${req.url.includes('?') ? req.url.substring(req.url.indexOf('?')) : ''}`));
     
     const publicPath = path.join(__dirname, '..', 'public');
     this.app.use(express.static(publicPath));

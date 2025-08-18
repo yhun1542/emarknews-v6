@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const newsService = require('../services/newsService');
 
 router.get('/health', async (req, res) => {
   res.status(200).json({
@@ -11,11 +12,26 @@ router.get('/health', async (req, res) => {
 });
 
 router.get('/feed', async (req, res) => {
-  res.json({
-    section: req.query.section || 'world',
-    clusters: [],
-    message: 'API endpoint ready - implement news fetching'
-  });
+  try {
+    const section = req.query.section || 'world';
+    console.log(`[API] 뉴스 피드 요청: section=${section}`);
+    
+    // 뉴스 데이터를 가져오는 로직
+    const newsData = await newsService.getNewsData(section);
+    
+    // JSON으로 응답
+    res.json({
+      success: true,
+      data: newsData
+    });
+  } catch (error) {
+    console.error('Feed error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch news',
+      message: error.message
+    });
+  }
 });
 
 router.get('/currency', async (req, res) => {
