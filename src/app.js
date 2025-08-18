@@ -48,10 +48,24 @@ class Application {
 
   setupRoutes() {
     this.app.get('/healthz', async (req, res) => {
+      const redisHealth = await database.healthCheck();
       res.json({
         status: 'healthy',
         version: '6.0.0',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        redis: redisHealth
+      });
+    });
+    
+    this.app.get('/health', async (req, res) => {
+      const redisHealth = await database.healthCheck();
+      res.json({
+        status: 'healthy',
+        version: '6.0.0',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        redis: redisHealth
       });
     });
     
