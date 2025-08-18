@@ -1,9 +1,22 @@
 console.log('🚀 EmarkNews v6.0 Starting...');
 
+// Fetch currency rates
+async function loadCurrency() {
+  try {
+    const response = await fetch('/api/currency');
+    const data = await response.json();
+    console.log('Currency loaded:', data);
+    document.getElementById('currency-display').textContent = data.display || '환율 로딩중...';
+  } catch (error) {
+    console.error('Failed to load currency:', error);
+    document.getElementById('currency-display').textContent = '환율 정보 없음';
+  }
+}
+
 // Fetch news feed
 async function loadNews(section = 'world') {
   try {
-    const response = await fetch(`/feed?section=${section}`);
+    const response = await fetch(`/api/feed?section=${section}`);
     const data = await response.json();
     console.log('News loaded:', data);
     document.getElementById('loading').style.display = 'none';
@@ -15,6 +28,7 @@ async function loadNews(section = 'world') {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+  loadCurrency();
   loadNews();
   
   // Navigation
