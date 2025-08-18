@@ -14,27 +14,26 @@ const connectRedis = async () => {
 
     logger.info('[Redis] Connecting to Redis...');
     
+    // 개선된 Redis 클라이언트 설정
     redisClient = redis.createClient({
       url: redisUrl,
-      retry_strategy: (options) => {
-        if (options.error && options.error.code === 'ECONNREFUSED') {
-          logger.error('[Redis] Connection refused');
-          return new Error('Redis connection refused');
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 10) {
+            logger.error('[Redis] Max reconnection attempts reached');
+            return new Error('Max reconnection attempts');
+          }
+          const delay = Math.min(retries * 100, 3000);
+          logger.info(`[Redis] Reconnecting in ${delay}ms (attempt ${retries})`);
+          return delay;
         }
-        if (options.total_retry_time > 1000 * 60 * 60) {
-          logger.error('[Redis] Retry time exhausted');
-          return new Error('Retry time exhausted');
-        }
-        if (options.attempt > 10) {
-          logger.error('[Redis] Max retry attempts reached');
-          return undefined;
-        }
-        return Math.min(options.attempt * 100, 3000);
       }
     });
 
+    // 에러 핸들링 - 앱이 죽지 않도록
     redisClient.on('error', (err) => {
-      logger.error('[Redis] Client error:', err);
+      logger.error('[Redis] Client error:', err.message);
+      // 에러가 나도 앱이 죽지 않도록 처리
     });
 
     redisClient.on('connect', () => {
@@ -49,6 +48,10 @@ const connectRedis = async () => {
       logger.warn('[Redis] Connection ended');
     });
 
+    redisClient.on('reconnecting', () => {
+      logger.info('[Redis] Reconnecting...');
+    });
+
     await redisClient.connect();
     
     // Test connection
@@ -59,6 +62,69 @@ const connectRedis = async () => {
   } catch (error) {
     logger.error('[Redis] Connection failed:', error.message);
     return null;
+  }
+};
+
+// Redis 없이도 동작하는 안전한 래퍼
+const redisWrapper = {
+  get: async (key) => {
+    try {
+      if (!redisClient || !redisClient.isOpen) {
+        return null;
+      }
+      return await redisClient.get(key);
+    } catch (err) {
+      logger.warn(`[Redis] Get failed for key ${key}:`, err.message);
+      return null;
+    }
+  },
+  
+  set: async (key, value, options) => {
+    try {
+      if (!redisClient || !redisClient.isOpen) {
+        return null;
+      }
+      return await redisClient.set(key, value, options);
+    } catch (err) {
+      logger.warn(`[Redis] Set failed for key ${key}:`, err.message);
+      return null;
+    }
+  },
+  
+  del: async (key) => {
+    try {
+      if (!redisClient || !redisClient.isOpen) {
+        return null;
+      }
+      return await redisClient.del(key);
+    } catch (err) {
+      logger.warn(`[Redis] Delete failed for key ${key}:`, err.message);
+      return null;
+    }
+  },
+  
+  exists: async (key) => {
+    try {
+      if (!redisClient || !redisClient.isOpen) {
+        return false;
+      }
+      return await redisClient.exists(key);
+    } catch (err) {
+      logger.warn(`[Redis] Exists check failed for key ${key}:`, err.message);
+      return false;
+    }
+  },
+  
+  expire: async (key, seconds) => {
+    try {
+      if (!redisClient || !redisClient.isOpen) {
+        return null;
+      }
+      return await redisClient.expire(key, seconds);
+    } catch (err) {
+      logger.warn(`[Redis] Expire failed for key ${key}:`, err.message);
+      return null;
+    }
   }
 };
 
@@ -110,5 +176,7 @@ const getClient = () => redisClient;
 module.exports = {
   connectRedis,
   healthCheck,
-  getClient
+  getClient,
+  redis: redisWrapper  // 안전한 Redis 래퍼 추가
 };
+
