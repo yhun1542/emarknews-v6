@@ -65,7 +65,6 @@ class Application {
     const apiLimiter = rateLimit({
       windowMs: 60000,
       max: 100,
-      trustProxy: true,
       skip: (req) => req.path.includes('.') || req.path === '/health'
     });
     
