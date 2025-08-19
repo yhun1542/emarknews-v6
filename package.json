@@ -11,7 +11,10 @@
     "start": "TRUST_PROXY=true node src/app.js",
     "dev": "nodemon src/app.js",
     "build": "npm ci --production",
-    "deploy": "npm run build && npm start"
+    "deploy": "npm run build && npm start",
+    "prebuild": "echo \"Build started at: \" && date",
+    "postbuild": "echo \"Build completed at: \" && date",
+    "clean": "rm -rf node_modules package-lock.json"
   },
   "dependencies": {
     "express": "^4.18.2",
