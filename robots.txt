@@ -1,0 +1,61 @@
+# EmarkNews Robots.txt
+# https://emarknews.com/robots.txt
+
+# 모든 검색엔진 허용
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Crawl-delay: 1
+
+# Google 봇 설정
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Google 뉴스 봇
+User-agent: Googlebot-News
+Allow: /
+Crawl-delay: 0
+
+# Naver 봇 설정
+User-agent: Yeti
+Allow: /
+Crawl-delay: 1
+
+# Daum 봇 설정
+User-agent: Daumoa
+Allow: /
+Crawl-delay: 1
+
+# Bing 봇 설정
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# 이미지 크롤링 허용
+User-agent: Googlebot-Image
+Allow: /
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.webp$
+
+# 악성 봇 차단
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# 사이트맵 위치
+Sitemap: https://emarknews.com/sitemap.xml
+Sitemap: https://emarknews.com/news-sitemap.xml
+
+# 호스트 지정 (선택사항)
+Host: https://emarknews.com

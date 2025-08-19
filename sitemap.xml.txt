@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- 메인 페이지 -->
+  <url>
+    <loc>https://emarknews.com/</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- 세계 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=world</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>PressRelease, Blog</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>세계 뉴스 - EmarkNews</news:title>
+      <news:keywords>세계 뉴스, 국제 뉴스, 글로벌 뉴스</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- 한국 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=kr</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>PressRelease, Blog</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>한국 뉴스 - EmarkNews</news:title>
+      <news:keywords>한국 뉴스, 국내 뉴스, Korea news</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- 일본 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=japan</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>PressRelease, Blog</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>일본 뉴스 - EmarkNews</news:title>
+      <news:keywords>일본 뉴스, Japan news, 日本ニュース</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- 테크 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=tech</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>Blog, UserGenerated</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>테크 뉴스 - EmarkNews</news:title>
+      <news:keywords>테크 뉴스, IT 뉴스, 기술 뉴스, AI, 인공지능</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- 비즈니스 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=business</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>PressRelease, Blog</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>비즈니스 뉴스 - EmarkNews</news:title>
+      <news:keywords>비즈니스 뉴스, 경제 뉴스, 주식, 금융</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- Buzz 뉴스 -->
+  <url>
+    <loc>https://emarknews.com/?section=buzz</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.7</priority>
+    <news:news>
+      <news:publication>
+        <news:name>EmarkNews</news:name>
+        <news:language>ko</news:language>
+      </news:publication>
+      <news:genres>Blog, UserGenerated, Satire</news:genres>
+      <news:publication_date>2025-01-01T00:00:00+09:00</news:publication_date>
+      <news:title>화제의 뉴스 - EmarkNews</news:title>
+      <news:keywords>화제, 버즈, 트렌드, 핫이슈</news:keywords>
+    </news:news>
+  </url>
+  
+  <!-- 유튜브 -->
+  <url>
+    <loc>https://emarknews.com/?section=youtube</loc>
+    <lastmod>2025-01-01T00:00:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+</urlset>

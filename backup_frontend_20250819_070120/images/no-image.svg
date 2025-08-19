@@ -1,0 +1,7 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  <text x="200" y="90" font-family="Arial, sans-serif" font-size="16" fill="#6c757d" text-anchor="middle">📰</text>
+  <text x="200" y="115" font-family="Arial, sans-serif" font-size="14" fill="#6c757d" text-anchor="middle">이미지 없음</text>
+  <text x="200" y="135" font-family="Arial, sans-serif" font-size="12" fill="#adb5bd" text-anchor="middle">No Image Available</text>
+</svg>
+

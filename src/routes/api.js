@@ -81,7 +81,7 @@ router.post('/summarize', async (req, res) => {
 
 router.get('/feed', async (req, res) => {
   const section = req.query.section || 'world';
-  res.redirect(\`/api/news/\${section}\`);
+  res.redirect(`/api/news/${section}`);
 });
 
 module.exports = router;

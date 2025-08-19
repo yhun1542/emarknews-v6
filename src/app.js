@@ -111,7 +111,7 @@ class Application {
     try {
       await this.initialize();
       this.server = this.app.listen(PORT, HOST, () => {
-        logger.info(\`✨ Server running at http://\${HOST}:\${PORT}\`);
+        logger.info(`✨ Server running at http://${HOST}:${PORT}`);
       });
     } catch (error) {
       logger.error('Failed to start server:', error);

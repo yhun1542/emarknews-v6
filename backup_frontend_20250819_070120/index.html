@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmarkNews - AI 실시간 뉴스</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/ai-styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <span class="logo-text">EmarkNews</span>
+            </div>
+            <div class="header-controls">
+                <div id="currency-display">환율 로딩중...</div>
+            </div>
+        </div>
+    </header>
+    
+    <nav class="nav">
+        <div class="nav-container">
+            <button class="nav-item active" data-section="world">🌍 세계</button>
+            <button class="nav-item" data-section="kr">🇰🇷 한국</button>
+            <button class="nav-item" data-section="japan">🇯🇵 일본</button>
+            <button class="nav-item" data-section="tech">💡 테크</button>
+        </div>
+    </nav>
+    
+    <main class="main">
+        <div class="container">
+            <div id="loading">AI가 뉴스를 분석중입니다...</div>
+            <div id="news-grid"></div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>Powered by AI: 실시간 요약, 번역, 클러스터링 및 화제성 분석 적용됨</p>
+    </footer>
+    
+    <script src="/js/app.js"></script>
+    <script src="/js/ai-features.js"></script>
+</body>
+</html>
+<script>
+// EmarkNews API Configuration
+const API_BASE = window.location.origin;
+const API_ENDPOINTS = {
+    news: `${API_BASE}/api/news`,
+    currency: `${API_BASE}/api/currency`,
+    youtube: `${API_BASE}/api/youtube`
+};
+</script>

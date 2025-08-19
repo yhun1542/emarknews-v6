@@ -56,7 +56,7 @@ class NewsService {
     try {
       const feed = await this.parser.parseURL(source.url);
       return feed.items.slice(0, 10).map(item => ({
-        id: \`\${source.name}_\${Date.now()}_\${Math.random()}\`,
+        id: `${source.name}_${Date.now()}_${Math.random()}`,
         title: item.title || 'No title',
         description: item.content || item.description || '',
         url: item.link || '#',

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EmarkNews v7 - API Test</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>EmarkNews v7 - API Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const tests = [
+            { name: 'Health Check', url: '/health' },
+            { name: 'News API', url: '/api/news/world' },
+            { name: 'Currency API', url: '/api/currency' },
+            { name: 'YouTube API', url: '/api/youtube/kr' }
+        ];
+        
+        const results = document.getElementById('results');
+        
+        tests.forEach(async test => {
+            try {
+                const response = await fetch(test.url);
+                const data = await response.json();
+                results.innerHTML += `
+                    <div class="test success">
+                        ✅ ${test.name}: ${response.status} OK
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="test error">
+                        ❌ ${test.name}: ${error.message}
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

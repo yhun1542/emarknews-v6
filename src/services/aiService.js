@@ -33,13 +33,13 @@ class AIService {
           model: 'gpt-4o-mini',
           messages: [
             { role: 'system', content: '번역해주세요' },
-            { role: 'user', content: \`제목: \${title}\\n내용: \${description}\` }
+            { role: 'user', content: `제목: ${title}\\n내용: ${description}` }
           ],
           max_tokens: 1000
         },
         {
           headers: {
-            'Authorization': \`Bearer \${this.openaiApiKey}\`,
+            'Authorization': `Bearer ${this.openaiApiKey}`,
             'Content-Type': 'application/json'
           }
         }
