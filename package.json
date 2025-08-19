@@ -1,6 +1,6 @@
 {
   "name": "emarknews-backend",
-  "version": "7.0.0",
+  "version": "7.0.1755602495",
   "description": "EmarkNews - AI-powered Real-time News Aggregator",
   "main": "src/app.js",
   "engines": {
