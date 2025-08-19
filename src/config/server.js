@@ -1,9 +1,21 @@
-module.exports = {
-  serverConfig: {
-    cors: { origin: '*' },
-    rateLimit: { windowMs: 60000, max: 100 }
+const logger = require('../utils/logger');
+
+const serverConfig = {
+  port: process.env.PORT || 8080,
+  host: '0.0.0.0',
+  cors: {
+    origin: true,
+    credentials: true
   },
-  initializeServices: async () => {
-    console.log('[Services] Initialized');
+  rateLimit: {
+    windowMs: 60000,
+    max: 100
   }
 };
+
+async function initializeServices() {
+  logger.info('Initializing services...');
+  return true;
+}
+
+module.exports = { serverConfig, initializeServices };
